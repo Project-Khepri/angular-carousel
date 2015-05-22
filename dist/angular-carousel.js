@@ -1,6 +1,6 @@
 /**
  * Angular Carousel - Mobile friendly touch carousel for AngularJS
- * @version v0.3.10 - 2015-02-11
+ * @version v0.3.10 - 2015-05-22
  * @link http://revolunet.github.com/angular-carousel
  * @author Julien Bouquillon <julien@revolunet.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -263,6 +263,8 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
 
                         carouselId++;
 
+                        var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+
                         var defaultOptions = {
                             transitionType: iAttributes.rnCarouselTransition || 'slide',
                             transitionEasing: iAttributes.rnCarouselEasing || 'easeTo',
@@ -271,7 +273,8 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                             autoSlideDuration: 3,
                             bufferSize: 5,
                             /* in container % how much we need to drag to trigger the slide change */
-                            moveTreshold: 0.1
+                            moveTreshold: 0.1,
+                            defaultIndex: 0
                         };
 
                         // TODO
@@ -293,14 +296,16 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                             mouseUpBound = false,
                             locked = false;
 
-                        $swipe.bind(iElement, {
-                            start: swipeStart,
-                            move: swipeMove,
-                            end: swipeEnd,
-                            cancel: function(event) {
-                                swipeEnd({}, event);
-                            }
-                        });
+                        if (supportsTouch) {
+                            $swipe.bind(iElement, {
+                                start: swipeStart,
+                                move: swipeMove,
+                                end: swipeEnd,
+                                cancel: function(event) {
+                                    swipeEnd({}, event);
+                                }
+                            });
+                        }
 
                         function getSlidesDOM() {
                             return iElement[0].querySelectorAll('ul[rn-carousel] > li');
@@ -472,6 +477,11 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                             };
                         }
 
+                        if (iAttributes.rnCarouselDefaultIndex) {
+                            var defaultIndexModel = $parse(iAttributes.rnCarouselDefaultIndex);
+                            options.defaultIndex = defaultIndexModel(scope.$parent) || 0;
+                        }
+
                         if (iAttributes.rnCarouselIndex) {
                             var updateParentIndex = function(value) {
                                 indexModel.assign(scope.$parent, value);
@@ -485,7 +495,7 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                                 scope.$parent.$watch(indexModel, function(newValue, oldValue) {
 
                                     if (newValue !== undefined && newValue !== null) {
-                                        if (currentSlides && newValue >= currentSlides.length) {
+                                        if (currentSlides && currentSlides.length > 0 && newValue >= currentSlides.length) {
                                             newValue = currentSlides.length - 1;
                                             updateParentIndex(newValue);
                                         } else if (currentSlides && newValue < 0) {
@@ -501,6 +511,12 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                                     }
                                 });
                                 isIndexBound = true;
+
+                                if (options.defaultIndex) {
+                                    goToSlide(options.defaultIndex, {
+                                        animate: !init
+                                    });
+                                }
                             } else if (!isNaN(iAttributes.rnCarouselIndex)) {
                                 /* if user just set an initial number, set it */
                                 goToSlide(parseInt(iAttributes.rnCarouselIndex, 10), {
@@ -508,7 +524,7 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                                 });
                             }
                         } else {
-                            goToSlide(0, {
+                            goToSlide(options.defaultIndex, {
                                 animate: !init
                             });
                             init = false;
