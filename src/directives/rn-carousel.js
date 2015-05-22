@@ -184,6 +184,8 @@
 
                         carouselId++;
 
+                        var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+
                         var defaultOptions = {
                             transitionType: iAttributes.rnCarouselTransition || 'slide',
                             transitionEasing: iAttributes.rnCarouselEasing || 'easeTo',
@@ -215,14 +217,16 @@
                             mouseUpBound = false,
                             locked = false;
 
-                        $swipe.bind(iElement, {
-                            start: swipeStart,
-                            move: swipeMove,
-                            end: swipeEnd,
-                            cancel: function(event) {
-                                swipeEnd({}, event);
-                            }
-                        });
+                        if (supportsTouch) {
+                            $swipe.bind(iElement, {
+                                start: swipeStart,
+                                move: swipeMove,
+                                end: swipeEnd,
+                                cancel: function(event) {
+                                    swipeEnd({}, event);
+                                }
+                            });
+                        }
 
                         function getSlidesDOM() {
                             return iElement[0].querySelectorAll('ul[rn-carousel] > li');
@@ -393,7 +397,7 @@
                                 }, duration * 1000);
                             };
                         }
-                        
+
                         if (iAttributes.rnCarouselDefaultIndex) {
                             var defaultIndexModel = $parse(iAttributes.rnCarouselDefaultIndex);
                             options.defaultIndex = defaultIndexModel(scope.$parent) || 0;
@@ -428,7 +432,7 @@
                                     }
                                 });
                                 isIndexBound = true;
-                                
+
                                 if (options.defaultIndex) {
                                     goToSlide(options.defaultIndex, {
                                         animate: !init
