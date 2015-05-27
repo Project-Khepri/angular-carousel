@@ -181,18 +181,12 @@
                     });
 
                     return function(scope, iElement, iAttributes, containerCtrl) {
-                        var easing;
                         var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
                         carouselId++;
-                        if (supportsTouch) {
-                            easing = 'easeTo';
-                        } else {
-                            easing = iAttributes.rnCarouselEasing || 'easeTo';
-                        }
 
                         var defaultOptions = {
                             transitionType: iAttributes.rnCarouselTransition || 'slide',
-                            transitionEasing: easing,
+                            transitionEasing: iAttributes.rnCarouselEasing || 'easeTo',
                             transitionDuration: parseInt(iAttributes.rnCarouselDuration, 10) || 300,
                             isSequential: true,
                             autoSlideDuration: 3,
@@ -204,6 +198,11 @@
 
                         // TODO
                         var options = angular.extend({}, defaultOptions);
+                        
+                        if (supportsTouch) {
+                            // Use default easing for touch devices.
+                            options.transitionEasing: 'easeTo';
+                        }
 
                         var pressed,
                             startX,
