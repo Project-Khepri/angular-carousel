@@ -201,7 +201,7 @@
                         
                         if (supportsTouch) {
                             // Use default easing for touch devices.
-                            options.transitionEasing: 'easeTo';
+                            options.transitionEasing = 'easeTo';
                         }
 
                         var pressed,
