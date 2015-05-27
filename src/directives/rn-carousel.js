@@ -181,14 +181,18 @@
                     });
 
                     return function(scope, iElement, iAttributes, containerCtrl) {
-
-                        carouselId++;
-
+                        var easing;
                         var supportsTouch = 'ontouchstart' in window || navigator.msMaxTouchPoints;
+                        carouselId++;
+                        if (supportsTouch) {
+                            easing = 'easeTo';
+                        } else {
+                            easing = iAttributes.rnCarouselEasing || 'easeTo';
+                        }
 
                         var defaultOptions = {
                             transitionType: iAttributes.rnCarouselTransition || 'slide',
-                            transitionEasing: iAttributes.rnCarouselEasing || 'easeTo',
+                            transitionEasing: easing,
                             transitionDuration: parseInt(iAttributes.rnCarouselDuration, 10) || 300,
                             isSequential: true,
                             autoSlideDuration: 3,
