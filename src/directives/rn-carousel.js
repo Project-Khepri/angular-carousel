@@ -307,9 +307,9 @@
                                         offset = index * -100;
                                         updateBufferIndex();
                                         if (
-                                          slideOptions.hasOwnProperty('onSlideTransitionComplete') &&
-                                          typeof slideOptions.onSlideTransitionComplete === 'function') {
-                                            slideOptions.onSlideTransitionComplete();
+                                          slideOptions.hasOwnProperty('rnCarouselOncomplete') &&
+                                          typeof slideOptions.rnCarouselOncomplete === 'function') {
+                                            slideOptions.rnCarouselOncomplete();
                                         }
                                         $timeout(function () {
                                           locked = false;
