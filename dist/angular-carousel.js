@@ -273,13 +273,13 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                             /* in container % how much we need to drag to trigger the slide change */
                             moveTreshold: 0.1,
                             defaultIndex: 0,
-                            swipeDisabled: iAttributes.rnSwipeDisabled || false
+                            swipeDisabled: iAttributes.rnSwipeDisabled || 'no'
                         };
 
                         // TODO
                         var options = angular.extend({}, defaultOptions);
 
-                        if (supportsTouch && !options.swipeDisabled) {
+                        if (supportsTouch && options.swipeDisabled === 'no') {
                             // Use default easing for touch devices.
                             options.transitionEasing = 'easeTo';
                         }
@@ -300,7 +300,7 @@ angular.module('angular-carousel').run(['$templateCache', function($templateCach
                             mouseUpBound = false,
                             locked = false;
 
-                        if (supportsTouch && !options.swipeDisabled) {
+                        if (supportsTouch && options.swipeDisabled === 'no') {
                             $swipe.bind(iElement, {
                                 start: swipeStart,
                                 move: swipeMove,
