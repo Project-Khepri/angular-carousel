@@ -193,13 +193,14 @@
                             bufferSize: 5,
                             /* in container % how much we need to drag to trigger the slide change */
                             moveTreshold: 0.1,
-                            defaultIndex: 0
+                            defaultIndex: 0,
+                            swipeDisabled: iAttributes.rnSwipeDisabled || false
                         };
 
                         // TODO
                         var options = angular.extend({}, defaultOptions);
 
-                        if (supportsTouch) {
+                        if (supportsTouch && !options.swipeDisabled) {
                             // Use default easing for touch devices.
                             options.transitionEasing = 'easeTo';
                         }
@@ -220,7 +221,7 @@
                             mouseUpBound = false,
                             locked = false;
 
-                        if (supportsTouch) {
+                        if (supportsTouch && !options.swipeDisabled) {
                             $swipe.bind(iElement, {
                                 start: swipeStart,
                                 move: swipeMove,
